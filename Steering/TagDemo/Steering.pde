@@ -22,7 +22,7 @@ abstract class Steering {
   // Get the current steering force for this behaviour
   PVector getForce() {
     if (active) {
-       // Actual force is calculated in subclass
+      // Actual force is calculated in subclass
        PVector f = calculateRawForce();
        f.mult(weight); // Weight the result
        return f;

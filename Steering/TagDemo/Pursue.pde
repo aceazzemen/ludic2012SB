@@ -10,10 +10,10 @@ class Pursue extends Steering {
   float radius;
   
   // Initialisation
-  Pursue(Agent a, Agent t, float r) {
+  Pursue(Agent a, PVector t, PVector v, float r) {
       super(a);
-      targetPos = t.position;
-      targetVel = t.velocity;
+      targetPos = t;
+      targetVel = v;
       radius = r;
       name = "Pursue";
   }
@@ -29,28 +29,27 @@ class Pursue extends Steering {
      } else  {
         // If agent's centre is over targetPos stop pursueing
         return new PVector(0,0); 
-      }   
+      }
   }
   
   PVector calculatePredictedPosition(){
-    PVector d = targetVel;
-    d.mult(calculateTimeToTarget());
-    PVector predPos = PVector.add(targetPos, d );
-    return predPos;
+    PVector d = new PVector(targetVel.x,targetVel.y);
+    float t = min(3,calculateTimeToTarget());
+    d.mult(t);
+    PVector predPos = PVector.add(targetPos, d);
+    if (predPos.mag()>0){
+      return predPos;
+    }
+    return new PVector(0,0);
   }
   
-  PVector calculateTimeToTarget(){
-    int k = 1;
+  float calculateTimeToTarget(){
+    float k = 1;
     PVector v = agent.velocity;
-    v.normalize();
     PVector timeToTarget = PVector.sub(targetPos,agent.position);
-    timeToTarget.normalize();
-    timeToTarget.mult(k);
-    timeToTarget.div(v);
-    return timeToTarget;
+    return k*(timeToTarget.mag()/v.mag());
   }
   
   void draw (){
-  
   }
 }
