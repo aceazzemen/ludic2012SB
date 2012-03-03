@@ -1,31 +1,31 @@
 /* 
- * The Pursue Steering Behaviour
+ * The EvadeSteering Behaviour
  */
  
-class Pursue extends Steering {
+class Evade extends Steering {
 
   // Position/size of target
-  PVector targetPos;
-  PVector targetVel;
+  PVector hunterPos;
+  PVector hunterVel;
   float radius;
   
   // Initialisation
-  Pursue(Agent a, PVector t, PVector v, float r) {
+  Evade(Agent a, PVector t, PVector v, float r) {
       super(a);
-      targetPos = t;
-      targetVel = v;
+      hunterPos = t;
+      hunterVel = v;
       radius = r;
-      name = "Pursue";
+      name = "Evade";
   }
   
   PVector calculateRawForce() {
     // Check that agent's centre is not over targetPos
-     if (PVector.dist(targetPos, agent.position) > radius) {
-       PVector pursue = PVector.sub(calculatePredictedPosition(), agent.position);
-       pursue.normalize();
-       pursue.mult(agent.maxSpeed);
-       pursue.sub(agent.velocity);
-       return pursue;
+     if (PVector.dist(agent.position,hunterPos) > radius) {
+       PVector evade = PVector.sub(agent.position, calculatePredictedPosition());
+       evade.normalize();
+       evade.mult(agent.maxSpeed);
+       evade.sub(agent.velocity);
+       return evade;
      } else  {
         // If agent's centre is over targetPos stop pursueing
         return new PVector(0,0); 
@@ -33,10 +33,10 @@ class Pursue extends Steering {
   }
   
   PVector calculatePredictedPosition(){
-    PVector d = new PVector(targetVel.x,targetVel.y);
+    PVector d = new PVector(hunterVel.x,hunterVel.y);
     float t = min(3,calculateTimeToTarget());
     d.mult(t);
-    PVector predPos = PVector.add(targetPos, d);
+    PVector predPos = PVector.add(hunterPos, d);
     if (predPos.mag()>0){
       return predPos;
     }
@@ -46,7 +46,7 @@ class Pursue extends Steering {
   float calculateTimeToTarget(){
     float k = 1;
     PVector v = agent.velocity;
-    PVector timeToTarget = PVector.sub(targetPos,agent.position);
+    PVector timeToTarget = PVector.sub(agent.position,hunterPos);
     return k*(timeToTarget.mag()/v.mag());
   }
   
