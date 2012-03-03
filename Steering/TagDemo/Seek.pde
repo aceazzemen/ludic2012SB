@@ -3,40 +3,36 @@
  */
 class Seek extends Steering {
   
-  // Position/size of target
-  PVector target;
+  // Position/size of targetPos
+  PVector targetPos;
+  
   float radius;
   
   // Initialisation
   Seek(Agent a, PVector t, float r) {
       super(a);
-      target = t;
+      targetPos = t;
       radius = r;
+      name = "Seek";
   }
   
   PVector calculateRawForce() {
-      // Check that agent's centre is not over target
-      if (PVector.dist(target, agent.position) > radius) {
+      // Check that agent's centre is not over targetPos
+      if (PVector.dist(targetPos, agent.position) > radius) {
         // Calculate Seek Force
-        PVector seek = PVector.sub(target, agent.position);
+        PVector seek = PVector.sub(targetPos, agent.position);
         seek.normalize();
         seek.mult(agent.maxSpeed);
         seek.sub(agent.velocity);
         return seek;
 
       } else  {
-        // If agent's centre is over target stop seeking
+        // If agent's centre is over targetPos stop seeking
         return new PVector(0,0); 
       }   
   }
   
-  // Draw the target
+  // Draw the targetPos
   void draw() {
-     pushStyle();
-     fill(204, 153, 0);
-     ellipse(target.x, target.y, radius, radius);
-     popStyle();
   }
-
-  
 }

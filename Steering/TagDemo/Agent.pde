@@ -55,6 +55,17 @@ class Agent {
     annotate = false;
   }  
   
+  // Agent's behavoiur
+  String getBehaviour(){
+    for (int i = 0; i < behaviours.size(); i++) {
+       Steering sb = (Steering) behaviours.get(i);
+       if (sb.active) {
+         return sb.name;
+       } 
+    }
+    return "null";
+  }
+  
   // Agent simulation step
   void update() {
     
@@ -99,20 +110,22 @@ class Agent {
     forward.normalize();
     side.x = -forward.y;
     side.y = forward.x;
+    
   }
   
   
   // Draw agent etc.
-  void draw() {
+  void draw(int col) {
     
     // Draw any steering behaviour related stuff
-    for (int i = 0; i < behaviours.size(); i++) {
-       Steering sb = (Steering) behaviours.get(i);
-       sb.draw();
-    }  
+    //for (int i = 0; i < behaviours.size(); i++) {
+      // Steering sb = (Steering) behaviours.get(i);
+       //sb.draw();
+    //}  
 
     // Draw the agent
     //   Draw circle
+    fill(col);
     float d = radius * 2;
     ellipse(position.x, position.y, d, d);
     //   Draw radial line in forward direction

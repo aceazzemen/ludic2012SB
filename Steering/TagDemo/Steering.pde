@@ -9,6 +9,8 @@ abstract class Steering {
   float weight;
   // Is the behaviour switched on?
   boolean active;
+  // name
+  String name;
   
   // Initialisation
   Steering(Agent a) {
