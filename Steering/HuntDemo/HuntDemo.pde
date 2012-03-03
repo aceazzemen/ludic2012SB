@@ -12,8 +12,10 @@ Agent target;
 Seek seek;
 Flee flee;
 Pursue pursue;
+Evade evade;
 
 int counterHunter=0;
+int counterTarget=0;
 
 // Are we paused?
 boolean pause;
@@ -34,16 +36,16 @@ void setup() {
   // Create behaviours
   seek = new Seek(hunter, target.position, 10);
   flee = new Flee(target, hunter.position, 10);
+  pursue = new Pursue(hunter, target.position,target.velocity, 10);
+  evade = new Evade(target, hunter.position, hunter.velocity, 10);
   
-  //pursue = new Pursue(hunter, target, 10);
-  //evade = new Evade(target, hunter.position, 10);
-  //pursue.active = false;
-  
+  pursue.active = false;
+  evade.active = false;
   // Add the behaviour to the agent
   hunter.behaviours.add(seek); 
-  //hunter.behaviours.add(pursue);
+  hunter.behaviours.add(pursue);
   target.behaviours.add(flee);
-  
+  target.behaviours.add(evade);
   smooth(); // Anti-aliasing on
 }
 
@@ -61,6 +63,7 @@ void draw() {
   if (!pause) {
     hunter.update(); 
     target.update();
+    print("HUNTER" + hunter.velocity );
   }
   /**/
   
@@ -82,12 +85,12 @@ void drawInfoPanel() {
   text("Space - play/pause", 10, 50);
   text("Click to move the target",10, 65);
   text("------- Hunter -------",10, 80);
-  text("behaviour = " + hunter.getBehaviour() ,10,95); 
+  text("behaviour (z/Z) = " + hunter.getBehaviour() ,10,95); 
   text("Mass (q/a) = " + hunter.mass, 10, 110);
   text("Max. Force (w/s) = " + hunter.maxForce, 10, 125);
   text("Max. Speed (e/d) = " + hunter.maxSpeed, 10, 140);
   text("------- Target -------",10, 155);
-  text("behaviour = " + target.getBehaviour(),10,170); 
+  text("behaviour (v/V) = " + target.getBehaviour(),10,170); 
   text("Mass (r/f) = " + target.mass, 10, 185);
   text("Max. Force (t/g) = " + target.maxForce, 10, 200);
   text("Max. Speed (y/h) = " + target.maxSpeed, 10, 215);
@@ -102,7 +105,8 @@ void drawInfoPanel() {
 void mouseClicked() {
   target.position = new PVector (mouseX, mouseY);
   seek.targetPos = target.position;
-  //pursue.targetPos = target.position;
+  pursue.targetPos = target.position;
+  evade.hunterPos = hunter.position;
   flee.hunterPos = hunter.position;
 }
 
@@ -120,7 +124,7 @@ void keyPressed() {
      /*** HUNTER ***/
      // Vary the hunter's behaviour
    } else if(key == 'z' || key == 'Z'){
-     changeBehaviour();
+     changeHunterBehaviour();
      
      // Vary the hunter's mass
    } else if (key == 'q' || key == 'Q') {
@@ -141,6 +145,9 @@ void keyPressed() {
      hunter.decMaxSpeed();
    
      /*** TARGET ***/  
+   } else if(key == 'v' || key == 'V'){
+     changeTargetBehaviour();  
+     
    // Vary the target's mass
    } else if (key == 'r' || key == 'R') {
      target.incMass();
@@ -162,13 +169,24 @@ void keyPressed() {
    }
 }
 
-void changeBehaviour(){
+void changeHunterBehaviour(){
   int n = hunter.behaviours.size();
   if (n>1){
     Steering sb = (Steering) hunter.behaviours.get(counterHunter % n);
     sb.active = false;
     counterHunter++;
     sb = (Steering) hunter.behaviours.get(counterHunter % n);
+    sb.active = true;
+  }
+}
+
+void changeTargetBehaviour(){
+  int n = target.behaviours.size();
+  if (n>1){
+    Steering sb = (Steering) target.behaviours.get(counterTarget % n);
+    sb.active = false;
+    counterHunter++;
+    sb = (Steering) target.behaviours.get(counterTarget % n);
     sb.active = true;
   }
 }

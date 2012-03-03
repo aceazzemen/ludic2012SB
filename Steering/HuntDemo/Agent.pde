@@ -41,8 +41,8 @@ class Agent {
     force = new PVector(0,0);
     
     // Some arbitary initial limits
-    maxSpeed = 5;
-    maxForce = 5;
+    maxSpeed = 3;
+    maxForce = 3;
    
     // Because velocity is zero vector 
     forward = new PVector(0,0);
@@ -191,6 +191,7 @@ class Agent {
    * Local: co-ordinate system with agent at the origin, facing along the
    * x-axis, with the y-axis extending to it's right.
    */ 
+  
   PVector toLocalSpace(PVector vec) {
     PVector trans = PVector.sub(vec, position);
     PVector local =  new PVector(trans.dot(forward), trans.dot(side));
@@ -204,7 +205,7 @@ class Agent {
     
     return global;
   }
-
+  
 }
   
   

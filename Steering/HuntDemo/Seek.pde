@@ -20,6 +20,7 @@ class Seek extends Steering {
       // Check that agent's centre is not over targetPos
       if (PVector.dist(targetPos, agent.position) > radius) {
         // Calculate Seek Force
+        print (targetPos);
         PVector seek = PVector.sub(targetPos, agent.position);
         seek.normalize();
         seek.mult(agent.maxSpeed);
