@@ -3,19 +3,17 @@
  * The HuntDemo sketch
  *
  */
-
+ 
+public static int PLAYER_NUM = 4;
+public static float WANDERDIST = 50;
 // Agents
-Agent hunter;
-Agent target;
+ArrayList<Agent> players;
 
-// It's steering behaviour
-Seek seek;
-Flee flee;
-Pursue pursue;
-Evade evade;
+//Catcher num;
+int catcher;
 
-int counterHunter=0;
-int counterTarget=0;
+//Chased;
+int closestAgent;
 
 // Are we paused?
 boolean pause;
@@ -30,22 +28,16 @@ void setup() {
   
   /*** Hunter Agent ***/
   // Create the agent
-  hunter = new Agent(10, 10, randomPoint());
-  target = new Agent(10, 10, randomPoint());
+  players = new ArrayList<Agent>();  
+  for (int i = 0; i<PLAYER_NUM;i++){
+    players.add(new Agent(10,10,randomPoint()));
+  }
   
-  // Create behaviours
-  seek = new Seek(hunter, target.position, 10);
-  flee = new Flee(target, hunter.position, 10);
-  pursue = new Pursue(hunter, target.position,target.velocity, 10);
-  evade = new Evade(target, hunter.position, hunter.velocity, 10);
+  catcher = 0;
+  closestAgent = -1;
+  //set first tagger
+  setChased(); 
   
-  pursue.active = false;
-  evade.active = false;
-  // Add the behaviour to the agent
-  hunter.behaviours.add(seek); 
-  hunter.behaviours.add(pursue);
-  target.behaviours.add(flee);
-  target.behaviours.add(evade);
   smooth(); // Anti-aliasing on
 }
 
@@ -61,15 +53,21 @@ void draw() {
   
   // Move forward one step in steering simulation
   if (!pause) {
-    hunter.update(); 
-    target.update();
-    print("HUNTER" + hunter.velocity );
+//update players
+    setCatcher();
+
+    setChased();
+
+    for (int i = 0; i<PLAYER_NUM;i++){
+      players.get(i).update();
+    }
   }
   /**/
   
   // Draw the agent
-  hunter.draw(0);
-  target.draw(255); 
+    for (int i = 0; i<PLAYER_NUM;i++){
+      players.get(i).draw();
+    }
   
   // Draw the information panel
   if (showInfo) drawInfoPanel();
@@ -83,17 +81,17 @@ void drawInfoPanel() {
   text("1 - toggle display", 10, 20);
   text("2 - toggle annotation", 10, 35);
   text("Space - play/pause", 10, 50);
-  text("Click to move the target",10, 65);
-  text("------- Hunter -------",10, 80);
-  text("behaviour (z/Z) = " + hunter.getBehaviour() ,10,95); 
-  text("Mass (q/a) = " + hunter.mass, 10, 110);
-  text("Max. Force (w/s) = " + hunter.maxForce, 10, 125);
-  text("Max. Speed (e/d) = " + hunter.maxSpeed, 10, 140);
+/* text("Click to move the target",10, 65);
+  text("------ Player 1 -------",10, 80);
+  //text("behaviour (z/Z) = " + player1.getBehaviour() ,10,95); 
+  text("Mass (q/a) = " + player1.mass, 10, 110);
+  text("Max. Force (w/s) = " + player1.maxForce, 10, 125);
+  text("Max. Speed (e/d) = " + player1.maxSpeed, 10, 140);
   text("------- Target -------",10, 155);
-  text("behaviour (v/V) = " + target.getBehaviour(),10,170); 
-  text("Mass (r/f) = " + target.mass, 10, 185);
-  text("Max. Force (t/g) = " + target.maxForce, 10, 200);
-  text("Max. Speed (y/h) = " + target.maxSpeed, 10, 215);
+  //text("behaviour (v/V) = " + player2.getBehaviour(),10,170); 
+  text("Mass (r/f) = " + player2.mass, 10, 185);
+  text("Max. Force (t/g) = " + player2.maxForce, 10, 200);
+  text("Max. Speed (y/h) = " + player2.maxSpeed, 10, 215);*/
   popStyle(); // Retrieve previous drawing style
 }
 
@@ -102,12 +100,12 @@ void drawInfoPanel() {
  */
 
 // Mouse clicked, so move the target
-void mouseClicked() {
-  target.position = new PVector (mouseX, mouseY);
-  seek.targetPos = target.position;
-  pursue.targetPos = target.position;
-  evade.hunterPos = hunter.position;
-  flee.hunterPos = hunter.position;
+void mouseClicked() {/*
+  player1.position = new PVector (mouseX, mouseY);
+  seek.targetPos = player2.position;
+  pursue.targetPos = player2.position;
+  evade.hunterPos = player1.position;
+  flee.hunterPos = player1.position;*/
 }
 
 // Key pressed
@@ -118,77 +116,55 @@ void keyPressed() {
    } else if (key == '1' || key == '!') {
      toggleInfo();
      
-   } else if (key == '2' || key == '@') {
-     hunter.toggleAnnotate();
+   }// else if (key == '2' || key == '@') {
+   //  player1.toggleAnnotate();
    
      /*** HUNTER ***/
      // Vary the hunter's behaviour
-   } else if(key == 'z' || key == 'Z'){
-     changeHunterBehaviour();
+//   } else if(key == 'z' || key == 'Z'){
+ //    changeHunterBehaviour();
      
      // Vary the hunter's mass
-   } else if (key == 'q' || key == 'Q') {
-     hunter.incMass();
+/*   } else if (key == 'q' || key == 'Q') {
+     player1.incMass();
    } else if (key == 'a' || key == 'A') {
-     hunter.decMass();
+     player1.decMass();
      
      // Vary the huntert's maximum force
    } else if (key == 'w' || key == 'W') {
-     hunter.incMaxForce();
+     player1.incMaxForce();
    } else if (key == 's' || key == 'S') {
-     hunter.decMaxForce();
+     player1.decMaxForce();
 
-     // Vary the hunter's maximum speed
+    //  Vary the hunter's maximum speed
    } else if (key == 'e' || key == 'E') {
-     hunter.incMaxSpeed();
+     player1.incMaxSpeed();
    } else if (key == 'd' || key == 'D') {
-     hunter.decMaxSpeed();
+     player1.decMaxSpeed();*/
    
      /*** TARGET ***/  
-   } else if(key == 'v' || key == 'V'){
+   /*} else if(key == 'v' || key == 'V'){
      changeTargetBehaviour();  
      
    // Vary the target's mass
    } else if (key == 'r' || key == 'R') {
-     target.incMass();
+     player2.incMass();
    } else if (key == 'f' || key == 'F') {
-     target.decMass();
+     player2.decMass();
      
      // Vary the target's maximum force
    } else if (key == 't' || key == 'T') {
-     target.incMaxForce();
+     player2.incMaxForce();
    } else if (key == 'g' || key == 'G') {
-     target.decMaxForce();
+     player2.decMaxForce();
 
      // Vary the target's maximum speed
    } else if (key == 'y' || key == 'Y') {
-     target.incMaxSpeed();
+     player2.incMaxSpeed();
    } else if (key == 'h' || key == 'H') {
-     target.decMaxSpeed();
+     player2.decMaxSpeed();
    
-   }
-}
-
-void changeHunterBehaviour(){
-  int n = hunter.behaviours.size();
-  if (n>1){
-    Steering sb = (Steering) hunter.behaviours.get(counterHunter % n);
-    sb.active = false;
-    counterHunter++;
-    sb = (Steering) hunter.behaviours.get(counterHunter % n);
-    sb.active = true;
-  }
-}
-
-void changeTargetBehaviour(){
-  int n = target.behaviours.size();
-  if (n>1){
-    Steering sb = (Steering) target.behaviours.get(counterTarget % n);
-    sb.active = false;
-    counterHunter++;
-    sb = (Steering) target.behaviours.get(counterTarget % n);
-    sb.active = true;
-  }
+   }*/
 }
 
 // Toggle the pause state
@@ -208,4 +184,40 @@ void toggleInfo() {
        showInfo = true;
      }
 }
+//finds out if anyone was caught.
+void setCatcher(){
+  Agent chaser = players.get(catcher);
+  PVector p = new PVector(chaser.position.x,chaser.position.y);
+  p.sub(players.get(closestAgent).position);
+  if(p.mag()<10){
+    int aux = catcher;
+    catcher = closestAgent;
+    closestAgent = aux;
+  }
+}
 
+
+
+//finds the closest agent to the agent input
+// and sets behaviours.
+void setChased(){
+  float shortestDist = -1;
+  Agent chaser = players.get(catcher);
+
+  for(int i=0;i<PLAYER_NUM;i++){
+    if(i != catcher){
+      PVector p = new PVector(chaser.position.x,chaser.position.y);
+      Agent runner = players.get(i);
+      p.sub(runner.position);
+      if(shortestDist == -1||p.mag()<shortestDist){
+        shortestDist = p.mag();
+        closestAgent = i;
+      }
+      runner.setMode(WANDERING,null);
+    }
+  }
+  Agent chased = players.get(closestAgent);
+  chaser.setMode(CATCHER, chased ); 
+  chased.setMode(CHASED, chaser );
+    
+}
