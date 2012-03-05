@@ -8,7 +8,7 @@
   public static final int FLEEING = 3; 
   public static final int SEEKING = 4;
   public static final int COUNTING = 5;  
-  public static final int COUNT_TIME = 7;
+  public static final int COUNT_TIME = 300;
   
 class Agent {
 
@@ -157,7 +157,7 @@ class Agent {
 
     // Draw the agent
     //   Draw circle
-    if(mode == CATCHER){
+    if(mode == CATCHER||mode == COUNTING){
       fill(125);
     } else {
       fill(255);
@@ -245,6 +245,9 @@ class Agent {
   
   //changes behaviour accordingly. if no other agent is needed to be known use NULL
   void setMode(int setting,Agent aux){
+    if(mode == COUNTING){
+      mode = setting;
+    }
     switch(setting){
       case CATCHER:
          
@@ -266,14 +269,31 @@ class Agent {
         ev.hunterPos = aux.position;
         ev.hunterVel = aux.velocity;
         ev.active = true;
-        break;        
+        break;
+ 
       case WANDERING:
          if(mode != setting){
           behaviours.get(mode).active = false;
           mode = setting;
         }      
         behaviours.get(mode).active = true;
-        break;        
+        break;
+      case COUNTING:
+        if(mode != setting){
+          behaviours.get(mode).active = false;
+          mode = setting;
+        }
+        break;
+      case FLEEING:
+         if(mode != setting){
+          behaviours.get(mode).active = false;
+          mode = setting;
+        } 
+        println("RUN");
+        Flee fl = (Flee)behaviours.get(mode);
+        fl.hunterPos = aux.position;
+        fl.active = true;
+        break;           
     }
         
     

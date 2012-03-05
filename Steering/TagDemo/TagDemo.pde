@@ -4,8 +4,11 @@
  *
  */
  
-public static int PLAYER_NUM = 4;
+public static int PLAYER_NUM = 10;
 public static float WANDERDIST = 50;
+
+
+
 // Agents
 ArrayList<Agent> players;
 
@@ -14,6 +17,9 @@ int catcher;
 
 //Chased;
 int closestAgent;
+
+//timer
+int timer;
 
 // Are we paused?
 boolean pause;
@@ -37,6 +43,8 @@ void setup() {
   closestAgent = -1;
   //set first tagger
   setChased(); 
+  
+  timer = 0;
   
   smooth(); // Anti-aliasing on
 }
@@ -100,12 +108,9 @@ void drawInfoPanel() {
  */
 
 // Mouse clicked, so move the target
-void mouseClicked() {/*
-  player1.position = new PVector (mouseX, mouseY);
-  seek.targetPos = player2.position;
-  pursue.targetPos = player2.position;
-  evade.hunterPos = player1.position;
-  flee.hunterPos = player1.position;*/
+void mouseClicked() {
+  players.get(catcher).position = new PVector (mouseX, mouseY);
+  setChased();
 }
 
 // Key pressed
@@ -189,10 +194,15 @@ void setCatcher(){
   Agent chaser = players.get(catcher);
   PVector p = new PVector(chaser.position.x,chaser.position.y);
   p.sub(players.get(closestAgent).position);
-  if(p.mag()<10){
+  if(p.mag()<10&&timer<=0){
+    println("caught");
+    chaser.velocity = new PVector(0,0);
     int aux = catcher;
     catcher = closestAgent;
     closestAgent = aux;
+    Agent count = players.get(catcher);
+    count.setMode(COUNTING,null);
+    timer = COUNT_TIME;
   }
 }
 
@@ -213,11 +223,19 @@ void setChased(){
         shortestDist = p.mag();
         closestAgent = i;
       }
-      runner.setMode(WANDERING,null);
+      if(timer>0){
+        runner.setMode(FLEEING, chaser);
+      }else{
+        runner.setMode(WANDERING,null);
+      }
     }
   }
-  Agent chased = players.get(closestAgent);
-  chaser.setMode(CATCHER, chased ); 
-  chased.setMode(CHASED, chaser );
-    
+  if(timer>0){
+    timer--;
+    chaser.velocity = new PVector(0,0);
+  } else{
+    Agent chased = players.get(closestAgent);
+    chaser.setMode(CATCHER, chased ); 
+    chased.setMode(CHASED, chaser );    
+  }
 }
