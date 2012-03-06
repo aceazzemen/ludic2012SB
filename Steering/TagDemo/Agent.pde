@@ -8,7 +8,7 @@
   public static final int FLEEING = 3; 
   public static final int SEEKING = 4;
   public static final int COUNTING = 5;  
-  public static final int COUNT_TIME = 300;
+  public static final int COUNT_TIME = 100;
   
 class Agent {
 
@@ -158,8 +158,10 @@ class Agent {
     // Draw the agent
     //   Draw circle
     if(mode == CATCHER||mode == COUNTING){
-      fill(125);
-    } else {
+      fill(255,0,0);
+    } else if(mode == CHASED){
+      fill(255,255,0);
+    }else{
       fill(255);
     }
     
@@ -242,12 +244,22 @@ class Agent {
     
     return global;
   }
-  
+  void avoidWall(PVector wall){
+    if(mode != FLEEING){
+          behaviours.get(mode).active = false;
+          mode = FLEEING;
+        } 
+    Flee fl = (Flee)behaviours.get(mode);
+    fl.hunterPos = wall;
+    fl.active = true;
+  }
   //changes behaviour accordingly. if no other agent is needed to be known use NULL
   void setMode(int setting,Agent aux){
     if(mode == COUNTING){
       mode = setting;
     }
+    maxSpeed = 3;
+    mass = 10;
     switch(setting){
       case CATCHER:
          
@@ -255,6 +267,8 @@ class Agent {
           behaviours.get(mode).active = false;
           mode = setting;
         }
+        maxSpeed = 5;
+        mass = 20;
         Pursue pur = (Pursue)behaviours.get(mode);
         pur.targetPos = aux.position;
         pur.targetVel = aux.velocity;
@@ -265,6 +279,8 @@ class Agent {
           behaviours.get(mode).active = false;
           mode = setting;
         } 
+        maxSpeed = 3.5;
+        mass = 8;
         Evade ev = (Evade)behaviours.get(mode);
         ev.hunterPos = aux.position;
         ev.hunterVel = aux.velocity;
@@ -283,13 +299,14 @@ class Agent {
           behaviours.get(mode).active = false;
           mode = setting;
         }
+        maxSpeed = 5;
+        mass = 20;
         break;
       case FLEEING:
          if(mode != setting){
           behaviours.get(mode).active = false;
           mode = setting;
         } 
-        println("RUN");
         Flee fl = (Flee)behaviours.get(mode);
         fl.hunterPos = aux.position;
         fl.active = true;
