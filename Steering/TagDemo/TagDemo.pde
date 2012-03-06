@@ -7,9 +7,7 @@
 public static int PLAYER_NUM = 30;
 public static float WANDERDIST = 50;
 public static int KEEP_AWAY = 200;
-public static int WALL = 30;
-
-
+public static int WALL = 10;
 
 // Agents
 ArrayList<Agent> players;
@@ -226,6 +224,22 @@ void setChased(){
     if(i != catcher){
       PVector p = new PVector(chaser.position.x,chaser.position.y);
       Agent runner = players.get(i);
+      
+      //TODO:
+      for(int j=0;j<PLAYER_NUM;j++){
+        //if its not itself or catcher
+        if(j!=i&&j!=catcher){
+          //get fellow agent
+          Agent neighbour = players.get(j);
+          //get its own pos vector
+          PVector pos = new PVector(runner.position.x,runner.position.y);
+          //subtract fellow's position
+          pos.sub(neighbour.position);
+          //find distance between
+          pos.mag();
+    
+        }
+      }
       p.sub(runner.position);
       if(shortestDist == -1||p.mag()<shortestDist){
         shortestDist = p.mag();

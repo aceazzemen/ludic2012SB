@@ -34,7 +34,7 @@ class Evade extends Steering {
   
   PVector calculatePredictedPosition(){
     PVector d = new PVector(hunterVel.x,hunterVel.y);
-    float t = min(3,calculateTimeToTarget());
+    float t = min(4,calculateTimeToTarget());
     d.mult(t);
     PVector predPos = PVector.add(hunterPos, d);
     if (predPos.mag()>0){
