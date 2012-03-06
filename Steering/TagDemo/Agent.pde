@@ -116,6 +116,8 @@ class Agent {
     if (maxSpeed > 0) velocity.limit(maxSpeed);
     position.add(velocity);
     
+    avoidWall();
+    /*
     // Dead stop at vertical boundaries
     if (position.x <= 0) {
       position.x = 0;
@@ -133,7 +135,7 @@ class Agent {
       position.y = height;
       velocity = new PVector(0,0);
     }
-    
+    */
     // Calculate forward and side vectors
     forward.x = velocity.x;
     forward.y = velocity.y;
@@ -243,6 +245,23 @@ class Agent {
     return global;
   }
   
+  
+  //Wall avoidance
+  
+  void avoidWall(){
+    PVector v = velocity;
+    v.mult(10);
+    PVector pred = PVector.add(position, v);
+    if(pred.x >= width || pred.x <= 0) {
+      println("before" + force);
+      velocity = new PVector(velocity.x*-1,velocity.y);
+      println("after" + force);
+    } else if (pred.y >= height || pred.y <= 0){
+      velocity = new PVector(velocity.x,velocity.y*-1);
+    }
+  }
+  
+  
   //changes behaviour accordingly. if no other agent is needed to be known use NULL
   void setMode(int setting,Agent aux){
     if(mode == COUNTING){
@@ -289,7 +308,7 @@ class Agent {
           behaviours.get(mode).active = false;
           mode = setting;
         } 
-        println("RUN");
+        //println("RUN");
         Flee fl = (Flee)behaviours.get(mode);
         fl.hunterPos = aux.position;
         fl.active = true;
