@@ -21,8 +21,8 @@ void setup() {
   
   // Create the agent
   wanderer = new Agent(10, 10, randomPoint());
-  // Creawanderte a wander behaviour
-  wander = new Wander(wanderer, randomPoint(), 10);
+  // Create a wander behaviour
+  wander = new Wander(wanderer, 10);
   // Add the behaviour to the agent
   wanderer.behaviours.add(wander);
 
@@ -62,12 +62,17 @@ void drawInfoPanel() {
   text("Wander radius (r/f) = " + wander.wradius, 10, 110);
   text("Wander distance (t/g) = " + wander.wdistance, 10, 125);
   text("Target jitter (y/h) = " + wander.jitter, 10, 140);
+  text("Click to move agent", 10, 155);
   popStyle(); // Retrieve previous drawing style
 }
 
 /*
  * Input handlers
  */
+ // Mouse clicked, so move the target
+void mouseClicked() {
+   wanderer.position = new PVector(mouseX, mouseY); 
+}
 
 // Key pressed
 void keyPressed() {

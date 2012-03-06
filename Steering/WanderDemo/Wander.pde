@@ -15,7 +15,7 @@ class Wander extends Steering {
   PVector c;
   
   // Initialisation
-  Wander(Agent a, PVector t, float r) {
+  Wander(Agent a, float r) {
       super(a);
       radius = r;
       wradius = 10.0;

@@ -4,10 +4,10 @@
  *
  */
  
-public static int PLAYER_NUM = 10;
+public static int PLAYER_NUM = 30;
 public static float WANDERDIST = 50;
-
-
+public static int KEEP_AWAY = 200;
+public static int WALL = 10;
 
 // Agents
 ArrayList<Agent> players;
@@ -89,13 +89,13 @@ void drawInfoPanel() {
   text("1 - toggle display", 10, 20);
   text("2 - toggle annotation", 10, 35);
   text("Space - play/pause", 10, 50);
-/* text("Click to move the target",10, 65);
-  text("------ Player 1 -------",10, 80);
-  //text("behaviour (z/Z) = " + player1.getBehaviour() ,10,95); 
-  text("Mass (q/a) = " + player1.mass, 10, 110);
-  text("Max. Force (w/s) = " + player1.maxForce, 10, 125);
-  text("Max. Speed (e/d) = " + player1.maxSpeed, 10, 140);
-  text("------- Target -------",10, 155);
+  text("Click to move the target",10, 65);
+  text("------ CATCHER -------",10, 80);
+  text("Catcher: Player No. "+(catcher+1),10,95);
+  text("Mass (q/a) = " + players.get(catcher).mass, 10, 110);
+  text("Max. Force (w/s) = " + players.get(catcher).maxForce, 10, 125);
+  text("Max. Speed (e/d) = " + players.get(catcher).maxSpeed, 10, 140);
+/*  text("------- Target -------",10, 155);
   //text("behaviour (v/V) = " + player2.getBehaviour(),10,170); 
   text("Mass (r/f) = " + player2.mass, 10, 185);
   text("Max. Force (t/g) = " + player2.maxForce, 10, 200);
@@ -195,18 +195,24 @@ void setCatcher(){
   PVector p = new PVector(chaser.position.x,chaser.position.y);
   p.sub(players.get(closestAgent).position);
   if(p.mag()<10&&timer<=0){
-    println("caught");
-    chaser.velocity = new PVector(0,0);
     int aux = catcher;
     catcher = closestAgent;
     closestAgent = aux;
     Agent count = players.get(catcher);
     count.setMode(COUNTING,null);
+    chaser.setMode(FLEEING,count);
+ 
     timer = COUNT_TIME;
   }
+
 }
-
-
+//run if too close;
+boolean setRun(Agent runner){
+  Agent chaser = players.get(catcher);
+  PVector p = new PVector(chaser.position.x,chaser.position.y);
+  p.sub(runner.position);
+  return p.mag()<KEEP_AWAY;
+} 
 
 //finds the closest agent to the agent input
 // and sets behaviours.
@@ -218,15 +224,35 @@ void setChased(){
     if(i != catcher){
       PVector p = new PVector(chaser.position.x,chaser.position.y);
       Agent runner = players.get(i);
+      
+      //TODO:
+      for(int j=0;j<PLAYER_NUM;j++){
+        //if its not itself or catcher
+        if(j!=i&&j!=catcher){
+          //get fellow agent
+          Agent neighbour = players.get(j);
+          //get its own pos vector
+          PVector pos = new PVector(runner.position.x,runner.position.y);
+          //subtract fellow's position
+          pos.sub(neighbour.position);
+          //find distance between
+          pos.mag();
+    
+        }
+      }
       p.sub(runner.position);
       if(shortestDist == -1||p.mag()<shortestDist){
         shortestDist = p.mag();
         closestAgent = i;
       }
-      if(timer>0){
-        runner.setMode(FLEEING, chaser);
+      if(!setRun(runner)||
+        runner.position.x<WALL||
+        runner.position.x>width-WALL||
+        runner.position.y<WALL||
+        runner.position.y>height-WALL){
+        runner.setMode(WANDERING,null);        
       }else{
-        runner.setMode(WANDERING,null);
+        runner.setMode(FLEEING,chaser);
       }
     }
   }

@@ -76,20 +76,20 @@ class Agent {
     position.add(velocity);
     
     // Dead stop at vertical boundaries
-    if (position.x < 0) {
-      position.x = width;
-      velocity = new PVector(0,0);
-    } else if (position.x > width) {
+    if (position.x <= 0) {
       position.x = 0;
+      velocity = new PVector(0,0);
+    } else if (position.x >= width) {
+      position.x = width;
       velocity = new PVector(0,0);
     }
 
     // Dead stop at horizontal boundaries    
-    if (position.y < 0) {
-      position.y = height;
-      velocity = new PVector(0,0);
-    } else if (position.y > height) {
+    if (position.y <= 0) {
       position.y = 0;
+      velocity = new PVector(0,0);
+    } else if (position.y >= height) {
+      position.y = height;
       velocity = new PVector(0,0);
     }
     

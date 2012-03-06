@@ -20,7 +20,7 @@ class Wander extends Steering {
       radius = r;
       wradius = 10.0;
       wdistance = 15.0;
-      jitter = 1.0;
+      jitter = 100.0;
       c = new PVector();
   }
   
@@ -65,7 +65,6 @@ class Wander extends Steering {
       c.normalize();
       c.mult(wradius);
       target.add(c);
-      
       return target;
   }
   
@@ -73,7 +72,7 @@ class Wander extends Steering {
       PVector target = wanderCalculation();
     
       // Check that agent's centre is not over target
-      if (PVector.dist(target, agent.position) > radius) {
+     // if (PVector.dist(target, agent.position) > radius) {
         // Calculate wander Force
         PVector wander = PVector.sub(target, agent.position);
         wander.normalize();
@@ -81,10 +80,10 @@ class Wander extends Steering {
         wander.sub(agent.velocity);
         return wander;
 
-      } else  {
+      //} else  {
         // If agent's centre is over target stop wandering
-        return new PVector(0,0);
-      }   
+      //  return new PVector(0,0);
+      //}   
   }
   
   // Draw the target
