@@ -194,11 +194,7 @@ class Agent {
   
   // Toggle annotations
   void toggleAnnotate() {
-    if (annotate) {
-       annotate = false;
-    } else {
-       annotate = true;
-    } 
+    annotate = !annotate;
   }
   
   /*

@@ -161,7 +161,10 @@ void keyPressed() {
      
    } else if (key == '1' || key == '!') {
      toggleInfo();
-     
+   } else if (key == '2' || key == '"') {
+     for(int k=0;k<PLAYER_NUM;k++){
+       players.get(k).toggleAnnotate();
+     }   
    } else if (key == 'q' || key == 'Q') {
      cMass++;
    } else if (key == 'a' || key == 'A') {
