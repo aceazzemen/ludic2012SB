@@ -30,6 +30,8 @@ class Agent {
   //current behaviour;
   int mode;
   
+  int player;
+  
   // Unit vector in direction agent is facing
   PVector forward; 
   // Unit vector orthogonal to forward, to the right of the agent
@@ -43,10 +45,12 @@ class Agent {
   boolean annotate;
 
   // Initialisation
-  Agent(float m, float r, PVector p) {
+  Agent(float m, float r, PVector p,int playerNo) {
     mass = m;
     radius = r;
     position = p;
+    
+    player = playerNo;
   
     // Agents starts at rest
     velocity = new PVector(0,0);
@@ -116,8 +120,8 @@ class Agent {
     if (maxSpeed > 0) velocity.limit(maxSpeed);
     position.add(velocity);
     
-    avoidWall();
-    /*
+    //avoidWall();
+    
     // Dead stop at vertical boundaries
     if (position.x <= 0) {
       position.x = 0;
@@ -135,7 +139,7 @@ class Agent {
       position.y = height;
       velocity = new PVector(0,0);
     }
-    */
+    
     // Calculate forward and side vectors
     forward.x = velocity.x;
     forward.y = velocity.y;
@@ -163,6 +167,8 @@ class Agent {
       fill(255,0,0);
     } else if(mode == CHASED){
       fill(255,255,0);
+    }else if(mode == FLEEING){
+      fill(0,255,0);
     }else{
       fill(255);
     }
@@ -280,8 +286,6 @@ class Agent {
     if(mode == COUNTING){
       mode = setting;
     }
-    maxSpeed = 3;
-    mass = 10;
     switch(setting){
       case CATCHER:
          
@@ -289,8 +293,9 @@ class Agent {
           behaviours.get(mode).active = false;
           mode = setting;
         }
-        maxSpeed = 5;
-        mass = 20;
+        maxSpeed = cSpeed;
+        maxForce = cForce;
+        mass = cMass;
         Pursue pur = (Pursue)behaviours.get(mode);
         pur.targetPos = aux.position;
         pur.targetVel = aux.velocity;
@@ -301,8 +306,9 @@ class Agent {
           behaviours.get(mode).active = false;
           mode = setting;
         } 
-        maxSpeed = 3.5;
-        mass = 8;
+        maxSpeed = tSpeed;
+        mass = tMass;
+        maxForce = tForce;
         Evade ev = (Evade)behaviours.get(mode);
         ev.hunterPos = aux.position;
         ev.hunterVel = aux.velocity;
@@ -314,6 +320,9 @@ class Agent {
           behaviours.get(mode).active = false;
           mode = setting;
         }      
+        maxSpeed = wSpeed;
+        mass = wMass;
+        maxForce = wForce;
         behaviours.get(mode).active = true;
         break;
       case COUNTING:
@@ -321,14 +330,18 @@ class Agent {
           behaviours.get(mode).active = false;
           mode = setting;
         }
-        maxSpeed = 5;
-        mass = 20;
+        maxSpeed = cSpeed;
+        mass = cMass;
+        maxForce = cForce;
         break;
       case FLEEING:
          if(mode != setting){
           behaviours.get(mode).active = false;
           mode = setting;
         } 
+        maxSpeed = fSpeed;
+        mass = fMass;
+        maxForce = fForce;
         //println("RUN");
         Flee fl = (Flee)behaviours.get(mode);
         fl.hunterPos = aux.position;

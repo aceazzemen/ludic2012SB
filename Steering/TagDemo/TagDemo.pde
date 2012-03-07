@@ -1,13 +1,29 @@
 /*
  *
- * The HuntDemo sketch
+ * The tagDemo sketch
  *
  */
  
 public static int PLAYER_NUM = 30;
 public static float WANDERDIST = 50;
-public static int KEEP_AWAY = 200;
+public static int KEEP_AWAY = 150;
 public static int WALL = 10;
+
+public static float cMass;
+public static float cForce;
+public static float cSpeed;
+
+public static float tMass;
+public static float tForce;
+public static float tSpeed;
+
+public static float fMass;
+public static float fForce;
+public static float fSpeed;
+
+public static float wMass;
+public static float wForce;
+public static float wSpeed;
 
 // Agents
 ArrayList<Agent> players;
@@ -32,11 +48,28 @@ void setup() {
   pause = false;
   showInfo = true;
   
+  cMass = 20;
+  cForce = 3;
+  cSpeed = 5;
+
+  tMass = 8;
+  tForce = 4;
+  tSpeed = 4;
+
+  fMass = 10;
+  fForce = 3;
+  fSpeed = 3;
+
+  wMass = 10;
+  wForce = 3;
+  wSpeed = 3;
+
+   
   /*** Hunter Agent ***/
   // Create the agent
   players = new ArrayList<Agent>();  
   for (int i = 0; i<PLAYER_NUM;i++){
-    players.add(new Agent(10,10,randomPoint()));
+    players.add(new Agent(10,10,randomPoint(),i));
   }
   
   catcher = 0;
@@ -92,14 +125,22 @@ void drawInfoPanel() {
   text("Click to move the target",10, 65);
   text("------ CATCHER -------",10, 80);
   text("Catcher: Player No. "+(catcher+1),10,95);
-  text("Mass (q/a) = " + players.get(catcher).mass, 10, 110);
-  text("Max. Force (w/s) = " + players.get(catcher).maxForce, 10, 125);
-  text("Max. Speed (e/d) = " + players.get(catcher).maxSpeed, 10, 140);
-/*  text("------- Target -------",10, 155);
-  //text("behaviour (v/V) = " + player2.getBehaviour(),10,170); 
-  text("Mass (r/f) = " + player2.mass, 10, 185);
-  text("Max. Force (t/g) = " + player2.maxForce, 10, 200);
-  text("Max. Speed (y/h) = " + player2.maxSpeed, 10, 215);*/
+  text("Mass (q/a) = " + cMass, 10, 110);
+  text("Max. Force (w/s) = " + cForce, 10, 125);
+  text("Max. Speed (e/d) = " + cSpeed, 10, 140);
+  text("------- CHASED -------",10, 155);
+  text("Chased: Player No. "+(closestAgent+1),10,170);
+  text("Mass (r/f) = " + tMass, 10, 185);
+  text("Max. Force (t/g) = " + tForce, 10, 200);
+  text("Max. Speed (y/h) = " + tSpeed, 10, 215);
+  text("------- FLEE -------",200, 20);
+  text("Mass (u/j) = " + fMass, 200, 35);
+  text("Max. Force (i/k) = " + fForce, 200,50);
+  text("Max. Speed (o/l) = " + fSpeed, 200,65);
+  text("------- WANDER -------",200, 80);
+  text("Mass (z/x) = " + wMass, 200, 95);
+  text("Max. Force (c/v) = " + wForce, 200,110);
+  text("Max. Speed (b/n) = " + wSpeed, 200,125);
   popStyle(); // Retrieve previous drawing style
 }
 
@@ -121,55 +162,79 @@ void keyPressed() {
    } else if (key == '1' || key == '!') {
      toggleInfo();
      
-   }// else if (key == '2' || key == '@') {
-   //  player1.toggleAnnotate();
-   
-     /*** HUNTER ***/
-     // Vary the hunter's behaviour
-//   } else if(key == 'z' || key == 'Z'){
- //    changeHunterBehaviour();
-     
-     // Vary the hunter's mass
-/*   } else if (key == 'q' || key == 'Q') {
-     player1.incMass();
+   } else if (key == 'q' || key == 'Q') {
+     cMass++;
    } else if (key == 'a' || key == 'A') {
-     player1.decMass();
-     
+     cMass--;
+     if(cMass<1){cMass=1;}
      // Vary the huntert's maximum force
    } else if (key == 'w' || key == 'W') {
-     player1.incMaxForce();
+     cForce++;
    } else if (key == 's' || key == 'S') {
-     player1.decMaxForce();
-
+     cForce--;
+     if(cForce<1){cForce=1;}
     //  Vary the hunter's maximum speed
    } else if (key == 'e' || key == 'E') {
-     player1.incMaxSpeed();
+     cSpeed++;
    } else if (key == 'd' || key == 'D') {
-     player1.decMaxSpeed();*/
-   
+     cSpeed--;
+     if(cSpeed<1){cSpeed=1;}
      /*** TARGET ***/  
-   /*} else if(key == 'v' || key == 'V'){
-     changeTargetBehaviour();  
-     
    // Vary the target's mass
    } else if (key == 'r' || key == 'R') {
-     player2.incMass();
+     tMass++;
    } else if (key == 'f' || key == 'F') {
-     player2.decMass();
-     
+     tMass--;
+     if(tMass<1){tMass=1;}
      // Vary the target's maximum force
    } else if (key == 't' || key == 'T') {
-     player2.incMaxForce();
+     tForce++;
    } else if (key == 'g' || key == 'G') {
-     player2.decMaxForce();
-
+     tForce--;
+     if(tForce<1){tForce=1;}
      // Vary the target's maximum speed
    } else if (key == 'y' || key == 'Y') {
-     player2.incMaxSpeed();
+     tSpeed++;
    } else if (key == 'h' || key == 'H') {
-     player2.decMaxSpeed();
-   
-   }*/
+     tSpeed--;
+     if(tSpeed<1){tSpeed=1;}
+     //For Flee parameters
+   } else if (key == 'u' || key == 'U') {
+     fMass++;
+   } else if (key == 'j' || key == 'J') {
+     fMass--;
+     if(fMass<1){fMass=1;}
+     // Vary the target's maximum force
+   } else if (key == 'i' || key == 'I') {
+     fForce++;
+   } else if (key == 'k' || key == 'K') {
+     fForce--;
+     if(fForce<1){fForce=1;}
+     // Vary the target's maximum speed
+   } else if (key == 'o' || key == 'O') {
+     fSpeed++;
+   } else if (key == 'l' || key == 'L') {
+     fSpeed--;
+     if(fSpeed<1){fSpeed=1;}
+   //For Wander
+   } else if (key == 'z' || key == 'Z') {
+     wMass++;
+   } else if (key == 'x' || key == 'X') {
+     wMass--;
+     if(wMass<1){wMass=1;}
+     // Vary the target's maximum force
+   } else if (key == 'c' || key == 'C') {
+     wForce++;
+   } else if (key == 'v' || key == 'V') {
+     wForce--;
+     if(wForce<1){wForce=1;}
+     // Vary the target's maximum speed
+   } else if (key == 'b' || key == 'B') {
+     wSpeed++;
+   } else if (key == 'n' || key == 'N') {
+     wSpeed--;
+     if(wSpeed<1){wSpeed=1;}
+   }
 }
 
 // Toggle the pause state
@@ -246,7 +311,7 @@ void setChased(){
         closestAgent = i;
       }
       if(!setRun(runner)||
-        runner.position.x<WALL||
+      runner.position.x<WALL||
         runner.position.x>width-WALL||
         runner.position.y<WALL||
         runner.position.y>height-WALL){
