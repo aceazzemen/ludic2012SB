@@ -20,7 +20,7 @@ class Wander extends Steering {
       radius = r;
       wradius = 10.0;
       wdistance = 15.0;
-      jitter = 1.0;
+      jitter = 10.0;
       c = new PVector();
   }
   
