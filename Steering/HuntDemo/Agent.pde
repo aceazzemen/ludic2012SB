@@ -31,6 +31,10 @@ class Agent {
 
   // Initialisation
   Agent(float m, float r, PVector p) {
+  /*//For Experiment purpose only 
+  Agent(float m, float r, PVector p,int ms) {
+    maxSpeed = ms;
+  */
     mass = m;
     radius = r;
     position = p;

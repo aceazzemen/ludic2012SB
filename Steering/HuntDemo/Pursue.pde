@@ -27,7 +27,11 @@ class Pursue extends Steering {
        pursue.sub(agent.velocity);
        return pursue;
      } else  {
-        // If agent's centre is over targetPos stop pursueing
+        // If agent's centre is over targetPos, stop
+        /* //For experiment purpose
+        println("TIME TAKEN is " + millis());
+        noLoop();
+        */
         return new PVector(0,0); 
       }
   }

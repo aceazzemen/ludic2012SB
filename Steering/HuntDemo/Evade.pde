@@ -1,5 +1,5 @@
 /* 
- * The EvadeSteering Behaviour
+ * The Evade Steering Behaviour
  */
  
 class Evade extends Steering {
@@ -19,7 +19,7 @@ class Evade extends Steering {
   }
   
   PVector calculateRawForce() {
-    // Check that agent's centre is not over targetPos
+    // Check that agent's centre is not over hunterPos
      if (PVector.dist(agent.position,hunterPos) > radius) {
        PVector evade = PVector.sub(agent.position, calculatePredictedPosition());
        evade.normalize();
@@ -27,7 +27,7 @@ class Evade extends Steering {
        evade.sub(agent.velocity);
        return evade;
      } else  {
-        // If agent's centre is over targetPos stop pursueing
+        // If agent's centre is over hunterPos, stop
         return new PVector(0,0); 
       }
   }

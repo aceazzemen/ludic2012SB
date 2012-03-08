@@ -4,7 +4,7 @@
  
 class Flee extends Steering {
 
-  // Position/size of target
+  // Position/size of hunter
   PVector hunterPos;
   float radius;
   
@@ -24,11 +24,9 @@ class Flee extends Steering {
         flee.normalize();
         flee.mult(agent.maxSpeed);
         flee.sub(agent.velocity);
-        //print("HUNTER POS" + hunterPos);
-        //print (" AGENT POS"+ agent.position);
         return flee;
       } else  {
-         //If agent's centre is over target stop seeking
+         //If agent's centre is over target, stop
         return new PVector(0,0); 
       } 
   }

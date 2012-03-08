@@ -3,9 +3,8 @@
  */
 class Seek extends Steering {
   
-  // Position/size of targetPos
+  // Position/size of target
   PVector targetPos;
-  
   float radius;
   
   // Initialisation
@@ -20,15 +19,17 @@ class Seek extends Steering {
       // Check that agent's centre is not over targetPos
       if (PVector.dist(targetPos, agent.position) > radius) {
         // Calculate Seek Force
-        print (targetPos);
         PVector seek = PVector.sub(targetPos, agent.position);
         seek.normalize();
         seek.mult(agent.maxSpeed);
         seek.sub(agent.velocity);
         return seek;
-
       } else  {
-        // If agent's centre is over targetPos stop seeking
+        // If agent's centre is over targetPos, stop
+        /* //For experiment purpose
+        println("TIME TAKEN is " + millis());
+        noLoop();
+        */
         return new PVector(0,0); 
       }   
   }

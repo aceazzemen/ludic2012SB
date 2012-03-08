@@ -33,14 +33,21 @@ void setup() {
   hunter = new Agent(10, 10, randomPoint());
   target = new Agent(10, 10, randomPoint());
   
+  /*//For experiment purpose only
+  hunter = new Agent(10, 10, new PVector (100,100),11);
+  target = new Agent(10, 10, new PVector (200,100),10);
+  */
+  
   // Create behaviours
   seek = new Seek(hunter, target.position, 10);
   flee = new Flee(target, hunter.position, 10);
-  pursue = new Pursue(hunter, target.position,target.velocity, 10);
+  pursue = new Pursue(hunter, target.position, target.velocity, 10);
   evade = new Evade(target, hunter.position, hunter.velocity, 10);
   
+  // initially start with seek/flee behaviour
   pursue.active = false;
   evade.active = false;
+  
   // Add the behaviour to the agent
   hunter.behaviours.add(seek); 
   hunter.behaviours.add(pursue);
@@ -63,7 +70,6 @@ void draw() {
   if (!pause) {
     hunter.update(); 
     target.update();
-    print("HUNTER" + hunter.velocity );
   }
   /**/
   
@@ -185,7 +191,7 @@ void changeTargetBehaviour(){
   if (n>1){
     Steering sb = (Steering) target.behaviours.get(counterTarget % n);
     sb.active = false;
-    counterHunter++;
+    counterTarget++;
     sb = (Steering) target.behaviours.get(counterTarget % n);
     sb.active = true;
   }
